@@ -5,27 +5,27 @@ namespace App\Controller\Api;
 use App\Entity\Product;
 use App\Exception\NotFoundException;
 use App\Form\ProductType;
+use App\Pagination\PaginationFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends BaseApiController
 {
+
     /**
      * @Route("products", methods={"GET"}, name="list_products")
      */
-    public function listProductsAction(EntityManagerInterface $entityManager)
+    public function listProductsAction(Request $request, EntityManagerInterface $entityManager, PaginationFactory $paginationFactory)
     {
         try {
-            $activeProducts = $entityManager->getRepository(Product::class)->getAllActiveProducts();
+            $activeProductsQueryBuilder = $entityManager->getRepository(Product::class)->getAllActiveProductsQueryBuilder();
 
-            $data = [
-                'products' => $activeProducts,
-                'count' => count($activeProducts),
-            ];
+            $paginatedCollection = $paginationFactory->createCollection($activeProductsQueryBuilder, $request, 'list_products');
 
-            return $this->createApiResponse($data);
+            return $this->createApiResponse($paginatedCollection);
         } catch (\Exception $e) {
+
             return $this->createApiErrorResponse($e->getMessage(), $e->getCode());
         }
     }

@@ -13,7 +13,7 @@ use JMS\Serializer\Annotation as JMS;
  */
 class Cart
 {
-    const LOCATION_FORMAT = '/api/v1/carts/%d';
+    const URI_FORMAT = '/api/v1/carts/%d';
 
     /**
      * @ORM\Id()
@@ -56,9 +56,9 @@ class Cart
      *
      * @return string
      */
-    public function getLocation(): string
+    public function getUri(): string
     {
-        return sprintf(self::LOCATION_FORMAT, $this->getId());
+        return sprintf(self::URI_FORMAT, $this->getId());
     }
 
     /**

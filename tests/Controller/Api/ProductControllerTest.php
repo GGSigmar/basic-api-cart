@@ -33,7 +33,7 @@ class ProductControllerTest extends ApiTestCase
 
         $this->assertEquals(
             [
-                'location',
+                'uri',
                 'id',
                 'name',
                 'price'
@@ -56,8 +56,8 @@ class ProductControllerTest extends ApiTestCase
 
     public function testListProductsAction()
     {
-        for ($i = 1; $i < 4; $i++) {
-            $this->productBuilder->buildProduct();
+        for ($i = 0; $i <= 6; $i++) {
+            $this->productBuilder->buildProduct(true, ['name' => 'Product' . $i, 'price' => $i * 100]);
         }
 
         $this->apiRequest('GET', $this->urlGenerator->generate('list_products'));
@@ -68,18 +68,60 @@ class ProductControllerTest extends ApiTestCase
 
         $returnedData = json_decode($response->getContent(), true);
 
-        $this->assertCount(2, $returnedData);
+        $this->assertCount(4, $returnedData);
 
         $this->assertEquals(
             [
-                'products',
+                'items',
                 'count',
+                'total',
+                '_links'
             ],
             array_keys($returnedData)
         );
 
         $this->assertEquals(3, $returnedData['count']);
-        $this->assertCount(3, $returnedData['products']);
+        $this->assertEquals(7, $returnedData['total']);
+        $this->assertCount(3, $returnedData['items']);
+        $this->assertCount(4, $returnedData['_links']);
+
+        $this->assertEquals('Product0', $returnedData['items'][0]['name']);
+        $this->assertEquals('Product1', $returnedData['items'][1]['name']);
+
+        $this->apiRequest('GET', $returnedData['_links']['next']);
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $returnedData = json_decode($response->getContent(), true);
+
+        $this->assertCount(4, $returnedData);
+
+        $this->assertEquals(3, $returnedData['count']);
+        $this->assertEquals(7, $returnedData['total']);
+        $this->assertCount(3, $returnedData['items']);
+        $this->assertCount(5, $returnedData['_links']);
+
+        $this->assertEquals('Product3', $returnedData['items'][0]['name']);
+        $this->assertEquals('Product4', $returnedData['items'][1]['name']);
+
+        $this->apiRequest('GET', $returnedData['_links']['last']);
+
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $returnedData = json_decode($response->getContent(), true);
+
+        $this->assertCount(4, $returnedData);
+
+        $this->assertEquals(1, $returnedData['count']);
+        $this->assertEquals(7, $returnedData['total']);
+        $this->assertCount(1, $returnedData['items']);
+        $this->assertCount(4, $returnedData['_links']);
+
+        $this->assertEquals('Product6', $returnedData['items'][0]['name']);
     }
 
     public function testCreateProductAction()
@@ -102,7 +144,7 @@ class ProductControllerTest extends ApiTestCase
 
         $this->assertEquals(
             [
-                'location',
+                'uri',
                 'id',
                 'name',
                 'price'
@@ -170,7 +212,7 @@ class ProductControllerTest extends ApiTestCase
 
         $this->assertEquals(
             [
-                'location',
+                'uri',
                 'id',
                 'name',
                 'price'

@@ -15,7 +15,7 @@ use JMS\Serializer\Annotation as JMS;
  */
 class Product
 {
-    const LOCATION_FORMAT = '/api/v1/products/%d';
+    const URI_FORMAT = '/api/v1/products/%d';
 
     /**
      * @ORM\Id()
@@ -70,9 +70,9 @@ class Product
      *
      * @return string
      */
-    public function getLocation()
+    public function getUri()
     {
-        return sprintf(self::LOCATION_FORMAT, $this->getId());
+        return sprintf(self::URI_FORMAT, $this->getId());
     }
 
     /**

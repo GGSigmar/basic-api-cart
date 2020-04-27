@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,16 +21,14 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array|Product[]
+     * @return QueryBuilder
      */
-    public function getAllActiveProducts(): array
+    public function getAllActiveProductsQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.isDeleted = :false')
             ->setParameter('false', false)
             ->orderBy('p.id', 'ASC')
-            ->getQuery()
-            ->getResult()
         ;
     }
 

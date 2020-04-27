@@ -41,13 +41,14 @@ class CartControllerTest extends ApiTestCase
         $this->assertCount(3, $returnedData);
         $this->assertEquals(
             [
-                'location',
+                'uri',
                 'id',
                 'items',
             ],
             array_keys($returnedData)
         );
     }
+
 
     public function testGetCartAction()
     {
