@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\SerializerInterface;
@@ -26,7 +27,9 @@ class BaseApiController extends AbstractController
      */
     public function getSerializer(): SerializerInterface
     {
-        return SerializerBuilder::create()->build();
+        return SerializerBuilder::create()
+            ->setPropertyNamingStrategy(new IdenticalPropertyNamingStrategy())
+            ->build();
     }
 
     /**

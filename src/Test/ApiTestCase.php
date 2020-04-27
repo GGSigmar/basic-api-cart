@@ -22,6 +22,11 @@ class ApiTestCase extends WebTestCase
      */
     protected $urlGenerator;
 
+    /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -36,8 +41,8 @@ class ApiTestCase extends WebTestCase
         parent::setUp();
 
         $this->client = self::$staticClient;
-
         $this->urlGenerator = $this->getService(UrlGeneratorInterface::class);
+        $this->entityManager = $this->getEntityManager();
 
         $this->purgeDatabase();
     }
@@ -45,6 +50,13 @@ class ApiTestCase extends WebTestCase
     public function tearDown(): void
     {
         $this->getEntityManager()->clear();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+
+        self::ensureKernelShutdown();
     }
 
     /**

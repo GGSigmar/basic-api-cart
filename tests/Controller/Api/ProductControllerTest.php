@@ -2,7 +2,6 @@
 
 namespace App\Tests\Controller\Api;
 
-use App\Entity\Product;
 use App\Test\ApiTestCase;
 use App\Test\ProductBuilder;
 
@@ -17,10 +16,10 @@ class ProductControllerTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->productBuilder = new ProductBuilder($this->getEntityManager());
+        $this->productBuilder = new ProductBuilder($this->entityManager);
     }
 
-    public function testGetProduct()
+    public function testGetProductAction()
     {
         $product = $this->productBuilder->buildProduct();
 
@@ -34,6 +33,7 @@ class ProductControllerTest extends ApiTestCase
 
         $this->assertEquals(
             [
+                'location',
                 'id',
                 'name',
                 'price'
@@ -54,7 +54,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals(404, $response->getStatusCode());
     }
 
-    public function testListProducts()
+    public function testListProductsAction()
     {
         for ($i = 1; $i < 4; $i++) {
             $this->productBuilder->buildProduct();
@@ -82,7 +82,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertCount(3, $returnedData['products']);
     }
 
-    public function testCreateProduct()
+    public function testCreateProductAction()
     {
         $productName = $this->productBuilder->getRandomProductName();
         $productPrice = $this->productBuilder->getRandomProductPrice();
@@ -92,7 +92,7 @@ class ProductControllerTest extends ApiTestCase
             'price' => $productPrice,
         ];
 
-        $this->apiRequest('POST', 'products', json_encode($data));
+        $this->apiRequest('POST', $this->urlGenerator->generate('create_product'), json_encode($data));
 
         $response = $this->client->getResponse();
 
@@ -102,6 +102,7 @@ class ProductControllerTest extends ApiTestCase
 
         $this->assertEquals(
             [
+                'location',
                 'id',
                 'name',
                 'price'
@@ -113,7 +114,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals($productPrice, $returnedData['price']);
     }
 
-    public function testInvalidCreateProduct()
+    public function testInvalidCreateProductAction()
     {
         $data = [
             'name' => $this->productBuilder->getRandomProductName(),
@@ -143,7 +144,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertArrayHasKey('price', $returnedData['errorDetails']);
     }
 
-    public function testUpdateProduct()
+    public function testUpdateProductAction()
     {
         $product = $this->productBuilder->buildProduct();
 
@@ -165,10 +166,11 @@ class ProductControllerTest extends ApiTestCase
 
         $returnedData = json_decode($response->getContent(), true);
 
-        $this->assertCount(3, $returnedData);
+        $this->assertCount(4, $returnedData);
 
         $this->assertEquals(
             [
+                'location',
                 'id',
                 'name',
                 'price'
@@ -182,7 +184,7 @@ class ProductControllerTest extends ApiTestCase
         $this->assertEquals($data['price'], $returnedData['price']);
     }
 
-    public function testDeleteProduct()
+    public function testDeleteProductAction()
     {
         $product = $this->productBuilder->buildProduct();
 
@@ -198,7 +200,7 @@ class ProductControllerTest extends ApiTestCase
 
         $this->assertEquals(404, $response->getStatusCode());
 
-        $this->getEntityManager()->refresh($product);
+        $this->entityManager->refresh($product);
 
         $this->assertEquals(true, $product->isDeleted());
     }

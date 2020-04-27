@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Money\Money;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMS;
@@ -14,11 +15,7 @@ use JMS\Serializer\Annotation as JMS;
  */
 class Product
 {
-    public function __construct()
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->isDeleted = false;
-    }
+    const LOCATION_FORMAT = '/api/v1/products/%d';
 
     /**
      * @ORM\Id()
@@ -57,9 +54,25 @@ class Product
      */
     private $isDeleted;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->isDeleted = false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @JMS\VirtualProperty()
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        return sprintf(self::LOCATION_FORMAT, $this->getId());
     }
 
     /**
@@ -72,14 +85,10 @@ class Product
 
     /**
      * @param string $name
-     *
-     * @return $this
      */
-    public function setName(string $name): self
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -91,15 +100,19 @@ class Product
     }
 
     /**
-     * @param int $price
-     *
-     * @return $this
+     * @return Money
      */
-    public function setPrice(int $price): self
+    public function getPriceAsMoney(): Money
+    {
+        return Money::PLN($this->getPrice());
+    }
+
+    /**
+     * @param int $price
+     */
+    public function setPrice(int $price): void
     {
         $this->price = $price;
-
-        return $this;
     }
 
     /**
@@ -128,13 +141,9 @@ class Product
 
     /**
      * @param bool $isDeleted
-     *
-     * @return $this
      */
-    public function setIsDeleted(bool $isDeleted): self
+    public function setIsDeleted(bool $isDeleted): void
     {
         $this->isDeleted = $isDeleted;
-
-        return $this;
     }
 }

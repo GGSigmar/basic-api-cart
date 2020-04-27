@@ -2,8 +2,6 @@ jms_serializer:
     visitors:
         xml_serialization:
             format_output: '%kernel.debug%'
-parameters:
-    jms_serializer.caml_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
 
 #    metadata:
 #        auto_detection: false

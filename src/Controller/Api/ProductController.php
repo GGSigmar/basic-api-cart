@@ -37,7 +37,7 @@ class ProductController extends BaseApiController
     {
         try {
             if (!$product || $product->getIsDeleted()) {
-                throw new NotFoundException('Product was not found');
+                throw new NotFoundException('product');
             }
 
             return $this->createApiResponse($product);

@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ItemRepository")
+ * @JMS\ExclusionPolicy("all")
  */
 class Item
 {
@@ -30,47 +32,133 @@ class Item
 
     /**
      * @ORM\Column(type="integer")
+     * @JMS\Expose()
      */
     private $quantity;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isDeleted;
+
+    /**
+     * Item constructor.
+     * @param Product $product
+     * @param int $quantity
+     */
+    public function __construct(Product $product, int $quantity)
+    {
+        $this->product = $product;
+        $this->quantity = $quantity;
+        $this->createdAt = new \DateTimeImmutable();
+        $this->isDeleted = false;
+    }
+
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return Product|null
+     */
     public function getProduct(): ?Product
     {
         return $this->product;
     }
 
-    public function setProduct(?Product $product): self
+    /**
+     * @param Product|null $product
+     */
+    public function setProduct(?Product $product): void
     {
         $this->product = $product;
-
-        return $this;
     }
 
+    /**
+     * @return Cart|null
+     */
     public function getCart(): ?Cart
     {
         return $this->cart;
     }
 
-    public function setCart(?Cart $cart): self
+    /**
+     * @param Cart|null $cart
+     */
+    public function setCart(?Cart $cart): void
     {
         $this->cart = $cart;
-
-        return $this;
     }
 
+    /**
+     * @return int|null
+     */
     public function getQuantity(): ?int
     {
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): self
+    public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
+    }
 
-        return $this;
+    /**
+     * @param int $quantityIncrease
+     */
+    public function increaseQuantity(int $quantityIncrease): void
+    {
+        $this->quantity += $quantityIncrease;
+    }
+
+    /**
+     * @param int $quantityDecrease
+     */
+    public function reduceQuantity(int $quantityDecrease): void
+    {
+        $this->quantity -= $quantityDecrease;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->getIsDeleted();
+    }
+
+    /**
+     * @param bool $isDeleted
+     *
+     * @return $this
+     */
+    public function setIsDeleted(bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
     }
 }

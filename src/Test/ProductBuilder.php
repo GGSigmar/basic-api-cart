@@ -3,22 +3,10 @@
 namespace App\Test;
 
 use App\Entity\Product;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class ProductBuilder
+class ProductBuilder extends AbstractEntityBuilder
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    public function __construct(
-        EntityManagerInterface $entityManager
-    ) {
-        $this->entityManager = $entityManager;
-    }
-
     public function getSampleProductData(): array
     {
         return [

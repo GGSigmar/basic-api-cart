@@ -5,32 +5,60 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CartRepository")
+ * @JMS\ExclusionPolicy("all")
  */
 class Cart
 {
+    const LOCATION_FORMAT = '/api/v1/carts/%d';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @JMS\Expose()
      */
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Item", mappedBy="cart", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Item", mappedBy="cart", orphanRemoval=true, cascade={"persist"})
+     * @JMS\Expose()
      */
     private $items;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isDeleted;
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->isDeleted = false;
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @JMS\VirtualProperty()
+     *
+     * @return string
+     */
+    public function getLocation(): string
+    {
+        return sprintf(self::LOCATION_FORMAT, $this->getId());
     }
 
     /**
@@ -60,6 +88,42 @@ class Cart
                 $item->setCart(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->getIsDeleted();
+    }
+
+    /**
+     * @param bool $isDeleted
+     *
+     * @return $this
+     */
+    public function setIsDeleted(bool $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }
