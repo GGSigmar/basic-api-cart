@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Service;
 
 use Money\Money;
 
@@ -13,6 +13,6 @@ class PriceFormatter
      */
     public static function formatMoneyPrice(Money $price): string
     {
-        return (string) (round(($price->getAmount() / 100), 2)) . " PLN";
+        return (string) (round(($price->getAmount() / 100), 2)) . " USD";
     }
 }

@@ -104,7 +104,7 @@ class Product
      */
     public function getPriceAsMoney(): Money
     {
-        return Money::PLN($this->getPrice());
+        return Money::USD($this->getPrice());
     }
 
     /**

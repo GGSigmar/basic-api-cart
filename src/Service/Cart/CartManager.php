@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Cart;
+namespace App\Service\Cart;
 
 use App\Entity\Cart;
 use App\Entity\Item;
@@ -71,7 +71,7 @@ class CartManager
             $totalPrice += $item->getProduct()->getPrice() * $item->getQuantity();
         }
 
-        return Money::PLN($totalPrice);
+        return Money::USD($totalPrice);
     }
 
     /**

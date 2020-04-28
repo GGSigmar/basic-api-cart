@@ -3,7 +3,7 @@
 namespace App\Tests\Controller\Api;
 
 use App\Entity\Item;
-use App\Services\Cart\CartManager;
+use App\Service\Cart\CartManager;
 use App\Test\ApiTestCase;
 use App\Test\CartBuilder;
 use App\Test\ProductBuilder;
@@ -72,7 +72,7 @@ class CartControllerTest extends ApiTestCase
         );
 
         $this->assertEquals($cart->getId(), $returnedData['cart']['id']);
-        $this->assertEquals('0 PLN', $returnedData['totalPrice']);
+        $this->assertEquals('0 USD', $returnedData['totalPrice']);
     }
 
     public function testAddProductToCartAction()
@@ -134,6 +134,32 @@ class CartControllerTest extends ApiTestCase
 
         $this->assertInstanceOf(Item::class, $item2);
         $this->assertEquals(2, $item2->getQuantity());
+
+        $product3 = $this->productBuilder->buildProduct();
+
+        $data4 = [
+            'product' => $product3->getId(),
+        ];
+
+        $this->apiRequest('PATCH', $this->urlGenerator->generate('add_product_to_cart', ['id' => $cart->getId()]), json_encode($data4));
+
+        $this->entityManager->refresh($cart);
+
+        $this->assertCount(3, $cart->getItems());
+
+        // test if there is a limit for 3 items per cart
+
+        $product4 = $this->productBuilder->buildProduct();
+
+        $data5 = [
+            'product' => $product4->getId(),
+        ];
+
+        $this->apiRequest('PATCH', $this->urlGenerator->generate('add_product_to_cart', ['id' => $cart->getId()]), json_encode($data5));
+
+        $this->entityManager->refresh($cart);
+
+        $this->assertCount(3, $cart->getItems());
     }
 
     public function testRemoveProductFromCartAction()
