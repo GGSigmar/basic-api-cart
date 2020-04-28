@@ -13,14 +13,15 @@ Find source code at: https://github.com/GGSigmar/basic-api-cart
 ### Setting up API
 
 * Download project from GitHub (*git clone git@github.com:GGSigmar/basic-api-cart.git*)
-* Install project dependencies (*composer install*)
+* Install project dependencies (*composer install --dev*)
+* Configure database credentials in .env
 * Create project database (*bin/console doctrine:database:create*)
 * Run project migrations to set up database (*bin/console doctrine:migrations:migrate*)
 * Load fixtures for initial products (*bin/console doctrine:fixtures:load*)
-* Start local server (if you have symfony binary: *symfony serve -d*, else *bin/console server:start*)
+* Start local server (easiest with [symfony binary](https://symfony.com/download): *symfony serve -d*)
 
 ### Setting up tests
 * Create test database (*bin/console doctrine:database:create --env=test*)
 * Create test schema (*bin/console doctrine:schema:create --env=test*)
-* Run tests (*bin/phpunit*, local server has to be running)
+* Run tests (*bin/phpunit*, local server has to be running (note that on first run test dependencies will be pulled))
 * Enjoy the green :D
