@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Service\PriceFormatter;
 use Doctrine\ORM\Mapping as ORM;
 use Money\Money;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -105,6 +106,14 @@ class Product
     public function getPriceAsMoney(): Money
     {
         return Money::USD($this->getPrice());
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedPrice(): string
+    {
+        return PriceFormatter::formatMoneyPrice($this->getPriceAsMoney());
     }
 
     /**

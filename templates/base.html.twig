@@ -1,12 +1,241 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+
+    <title>{% block title %}Basic Cart API{% endblock %}</title>
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% endblock %}
+    {% block javascripts %}
+        <script
+                src="https://code.jquery.com/jquery-3.4.1.js"
+                integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+                crossorigin="anonymous">
+
+        </script>
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+    <div class="app bg-light text-black">
+        <div class="container">
+            <div class="row">
+                {% block content %}
+                    <div class="col-md-12 mb-3">
+                        <h1>Basic Cart API</h1>
+
+                        <p>
+                            Simple API for managing products and carts.
+                        </p>
+                        <p>
+                            Find source code at: <b>https://github.com/GGSigmar/basic-api-cart</b>
+                        </p>
+                        <p>
+                            Considerations:
+                            <br>
+                            <ul>
+                                <li>There can be up to 3 items in the cart</li>
+                                <li>The list of products must be paginated and 3 products per page must be displayed</li>
+                                <li>Adding a product to cart second time increases its quantity</li>
+                            </ul>
+                        </p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <h3>Installation</h3>
+
+                        <h5>Setting up API</h5>
+                        <ul>
+                            <li>
+                                Download project from GitHub (<i>git clone git@github.com:GGSigmar/basic-api-cart.git</i>)
+                            </li>
+                            <li>
+                                Install project dependencies (<i>composer install</i>)
+                            </li>
+                            <li>
+                                Create project database (<i>bin/console doctrine:database:create</i>)
+                            </li>
+                            <li>
+                                Run project migrations to set up database (<i>bin/console doctrine:migrations:migrate</i>)
+                            </li>
+                            <li>
+                                Load fixtures for initial products (<i>bin/console doctrine:fixtures:load</i>)
+                            </li>
+                            <li>
+                                Start local server (if you have symfony binary: <i>symfony serve -d</i>, else <i>bin/console server:start</i>)
+                            </li>
+                        </ul>
+
+                        <h5>Setting up tests</h5>
+                        <ul>
+                            <li>
+                                Create test database (<i>bin/console doctrine:database:create --env=test</i>)
+                            </li>
+                            <li>
+                                Create test schema (<i>bin/console doctrine:schema:create --env=test</i>)
+                            </li>
+                            <li>
+                                Run tests (<i>bin/phpunit</i>, local server has to be running)
+                            </li>
+                            <li>
+                                Enjoy the green :D
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <h3>Documentation</h3>
+
+                        <h5>Product API</h5>
+                        <div class="table-responsive-md">
+                            <table class="table table-striped text-center">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Url</th>
+                                        <th scope="col">Method</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Request contents</th>
+                                        <th scope="col">Example request content</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="align-middle">/api/v1/products</td>
+                                        <td class="align-middle"><span class="badge badge-success">GET</span></td>
+                                        <td class="align-middle">Get a paginated list of active products in the database</td>
+                                        <td class="align-middle">n/a</td>
+                                        <td class="align-middle">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <td>/api/v1/products/{id}</td>
+                                        <td><span class="badge badge-success">GET</span></td>
+                                        <td>Get a single active product</td>
+                                        <td>n/d</td>
+                                        <td>n/d</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">/api/v1/products</td>
+                                        <td class="align-middle"><span class="badge badge-primary">POST</span></td>
+                                        <td class="align-middle">Create a new product</td>
+                                        <td class="align-middle">
+                                            name (name of the product)
+                                            <br>
+                                            price (price of the product in cents)
+                                        </td>
+                                        <td class="align-middle">
+                                            {"name": "Product X", "price": 499}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">/api/v1/products/{id}</td>
+                                        <td class="align-middle"><span class="badge badge-warning">PATCH</span></td>
+                                        <td class="align-middle">Update a product</td>
+                                        <td class="align-middle">
+                                            name (name of the product)
+                                            <br>
+                                            price (price of the product in cents)
+                                        </td>
+                                        <td class="align-middle">
+                                            {"name": "Product X", "price": 499}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>/api/v1/products/{id}</td>
+                                        <td><span class="badge badge-danger">DELETE</span></td>
+                                        <td>Delete a product</td>
+                                        <td>n/a</td>
+                                        <td>n/a</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h5>Cart API</h5>
+                        <div class="table-responsive-md">
+                            <table class="table table-striped text-center">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Url</th>
+                                        <th scope="col">Method</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Request contents</th>
+                                        <th scope="col">Example request content</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>/api/v1/carts/{id}</td>
+                                        <td><span class="badge badge-success">GET</span></td>
+                                        <td>Get a single cart</td>
+                                        <td>n/a</td>
+                                        <td>n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <td>/api/v1/products</td>
+                                        <td><span class="badge badge-primary">POST</span></td>
+                                        <td>Create a new cart</td>
+                                        <td>n/a</td>
+                                        <td>n/a
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">/api/v1/carts/{id}/add-product</td>
+                                        <td class="align-middle"><span class="badge badge-warning">PATCH</span></td>
+                                        <td class="align-middle">Add product to cart</td>
+                                        <td class="align-middle">
+                                            product (id of the product to be added to cart)
+                                            <br>
+                                            quantity (not required (default 1), quantity of product added to cart)
+                                        </td>
+                                        <td class="align-middle">
+                                            {"product": 1, "quantity": 3}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle">/api/v1/carts/{id}/remove-product</td>
+                                        <td class="align-middle"><span class="badge badge-warning">PATCH</span></td>
+                                        <td class="align-middle">Remove product from cart</td>
+                                        <td class="align-middle">
+                                            product (id of the product to be added to cart)
+                                        </td>
+                                        <td class="align-middle">
+                                            {"product": 1}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <h2>Products (active) currently in the database</h2>
+
+                        <div class="table-responsive-md">
+                            <table class="table table-striped text-center">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Price</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in activeProducts %}
+                                    <tr>
+                                        <td>{{ product.id }}</td>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.formattedPrice }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</body>
 </html>

@@ -33,6 +33,15 @@ class ProductRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array
+     */
+    public function getAllActivePRoducts(): array
+    {
+        $qb = $this->getAllActiveProductsQueryBuilder();
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param int $productId
      *
      * @return Product|null
